@@ -12,13 +12,32 @@ export class StocksTableComponent implements OnInit {
   myWebSocket: WebSocketSubject<any> = webSocket('ws://stocks.mnet.website');
 
   constructor() { }
-
+  tableData = [];
   ngOnInit(): void {
-    this.getPrice();
   }
 
   getPrice(): void {
-    this.myWebSocket
-      .subscribe(dataFromServer => console.log(dataFromServer));
+    let temp = [];
+    this.myWebSocket.subscribe(res => {
+      res.forEach(([name, price]) => {
+        if (!temp.includes(`${name}`)) {
+          temp.push(`${name}`);
+          this.tableData.push({
+            ticker: `${name}`,
+            price: `${price}`
+          });
+        } else {
+          this.tableData.find((obj, i) => {
+            if (obj.ticker === `${name}`) {
+              obj.price = `${price}`;
+            }
+          });
+        }
+      });
+    });
+  }
+
+  stop(): void {
+    this.myWebSocket.unsubscribe();
   }
 }
