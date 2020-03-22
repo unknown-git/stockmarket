@@ -1,6 +1,4 @@
 <div class="container pt-5">
-    <button (click)="getPrice()">Start</button>
-    <button (click)="stop()">Stop</button>
     <table class="table" border="1">
         <thead class="thead-dark">
             <tr>
@@ -12,8 +10,8 @@
         <tbody>
             <tr *ngFor="let obj of tableData">
                 <th>{{obj.ticker}}</th>
-                <td>{{obj.price}}</td>
-                <td>Otto</td>
+                <td [style.background]="obj.bgc" [style.color]="'blue'">{{obj.price}}</td>
+                <td>{{obj.time | date: 'MMM d, y, h:mm:ss a' }}</td>
             </tr>
         </tbody>
     </table>

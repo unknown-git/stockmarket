@@ -14,30 +14,37 @@ export class StocksTableComponent implements OnInit {
   constructor() { }
   tableData = [];
   ngOnInit(): void {
+    this.getPrice();
   }
 
   getPrice(): void {
     let temp = [];
-    this.myWebSocket.subscribe(res => {
+    this.myWebSocket.subscribe(res => {          // Subcribe to websocket
       res.forEach(([name, price]) => {
-        if (!temp.includes(`${name}`)) {
-          temp.push(`${name}`);
+        if (!temp.includes(name)) {              // Add new row
+          temp.push(name);
           this.tableData.push({
-            ticker: `${name}`,
-            price: `${price}`
+            ticker: name,
+            price,
+            bgc: 'white',
+            time: new Date()
           });
-        } else {
+        } else {                                 // Update existing row
           this.tableData.find((obj, i) => {
-            if (obj.ticker === `${name}`) {
-              obj.price = `${price}`;
+            if (obj.ticker === name) {
+              if (price > obj.price) {
+                obj.bgc = '#b2fab4';
+              } else if (price < obj.price) {
+                obj.bgc = '#ffa4a2';
+              } else if (price === obj.price) {
+                obj.bgc = '#efefef';
+              }
+              obj.price = price;
+              obj.time = new Date();
             }
           });
         }
       });
     });
-  }
-
-  stop(): void {
-    this.myWebSocket.unsubscribe();
   }
 }
